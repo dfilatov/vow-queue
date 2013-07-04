@@ -2,6 +2,53 @@ var Queue = require('../lib/queue'),
     vow = require('vow');
 
 describe('queue', function() {
+    it('enqueue should return promise', function() {
+        var queue = new Queue();
+        vow.isPromise(queue.enqueue(function() {})).should.be.true;
+    });
+
+    it('enqueue should return promise that would be fulfilled on task resolve', function(done) {
+        var queue = new Queue(),
+            promise = vow.promise();
+
+        queue.enqueue(
+            function() {
+                return promise;
+            }).then(function(res) {
+                res.should.be.equal('ok');
+                done();
+            });
+
+        promise.fulfill('ok');
+    });
+
+    it('enqueue should return promise that would be rejected on task fail', function(done) {
+        var queue = new Queue(),
+            promise = vow.promise();
+
+        queue.enqueue(
+            function() {
+                return promise;
+            }).fail(function(res) {
+                res.should.be.equal('err');
+                done();
+            });
+
+        promise.reject('err');
+    });
+
+    it('enqueue should return promise for synchronous task', function(done) {
+        var queue = new Queue();
+
+        queue.enqueue(
+            function() {
+                return 'ok';
+            }).then(function(res) {
+                res.should.be.equal('ok');
+                done();
+            });
+    });
+
     it('should run tasks while weight limit not exceeded', function(done) {
         var queue = new Queue({ weightLimit : 2 }),
             p1 = vow.promise(),
