@@ -225,7 +225,7 @@ describe('queue', function() {
 
         (function() {
             queue.enqueue(function() {}, { weight : 6 });
-        }).should.throw('task with weight 6 couldn\'t be executed in queue with weight limit of 5');
+        }).should.throw('task with weight of 6 can\'t be performed in queue with limit of 5');
 
         done();
     });
