@@ -9,32 +9,32 @@ describe('queue', function() {
 
     it('enqueue should return promise that would be fulfilled on task resolve', function(done) {
         var queue = new Queue(),
-            promise = vow.promise();
+            defer = vow.defer();
 
         queue.enqueue(
             function() {
-                return promise;
+                return defer.promise();
             }).then(function(res) {
                 res.should.be.equal('ok');
                 done();
             });
 
-        promise.fulfill('ok');
+        defer.resolve('ok');
     });
 
     it('enqueue should return promise that would be rejected on task fail', function(done) {
         var queue = new Queue(),
-            promise = vow.promise();
+            defer = vow.defer();
 
         queue.enqueue(
             function() {
-                return promise;
+                return defer.promise();
             }).fail(function(res) {
                 res.should.be.equal('err');
                 done();
             });
 
-        promise.reject('err');
+        defer.reject('err');
     });
 
     it('enqueue should return promise for synchronous task', function(done) {
@@ -51,24 +51,24 @@ describe('queue', function() {
 
     it('should run tasks while weight limit not exceeded', function(done) {
         var queue = new Queue({ weightLimit : 2 }),
-            p1 = vow.promise(),
-            p2 = vow.promise(),
-            p3 = vow.promise(),
+            d1 = vow.defer(),
+            d2 = vow.defer(),
+            d3 = vow.defer(),
             callCount = 0;
 
         queue.enqueue(function() {
             callCount++;
-            return p1;
+            return d1.promise();
         });
 
         queue.enqueue(function() {
             callCount++;
-            return p2;
+            return d2.promise();
         });
 
         queue.enqueue(function() {
             callCount++;
-            return p3;
+            return d3.promise();
         });
 
         process.nextTick(function() {
@@ -79,32 +79,31 @@ describe('queue', function() {
 
     it('should run tasks with the release of the queue', function(done) {
         var queue = new Queue({ weightLimit : 2 }),
-            p1 = vow.promise(),
-            p2 = vow.promise(),
-            p3 = vow.promise(),
-            callCount = 0;
+            d1 = vow.defer(),
+            d2 = vow.defer(),
+            d3 = vow.defer(),
+            callCount = 0,
+            p1task = queue.enqueue(function() {
+                callCount++;
+                return d1.promise();
+            });
 
-        var p1task = queue.enqueue(function() {
+        queue.enqueue(function() {
             callCount++;
-            return p1;
+            return d2.promise();
         });
 
         queue.enqueue(function() {
             callCount++;
-            return p2;
+            return d3.promise();
         });
 
         queue.enqueue(function() {
             callCount++;
-            return p3;
+            return d3.promise();
         });
 
-        queue.enqueue(function() {
-            callCount++;
-            return p3;
-        });
-
-        p1.fulfill();
+        d1.resolve();
         p1task.then(function() {
             callCount.should.be.equal(3);
             done();
@@ -113,43 +112,41 @@ describe('queue', function() {
 
     it('should run tasks with the release of the queue and according their weights', function(done) {
         var queue = new Queue({ weightLimit : 5 }),
-            p1 = vow.promise(),
-            p2 = vow.promise(),
-            p3 = vow.promise(),
-            p4 = vow.promise(),
-            p5 = vow.promise(),
-            callCount = 0;
-
-        var p1task = queue.enqueue(function() {
-            callCount++;
-            return p1;
-        });
-
-        var p2task = queue.enqueue(
-            function() {
+            d1 = vow.defer(),
+            d2 = vow.defer(),
+            d3 = vow.defer(),
+            d4 = vow.defer(),
+            d5 = vow.defer(),
+            callCount = 0,
+            p1task = queue.enqueue(function() {
                 callCount++;
-                return p2;
-            },
-            { weight : 4 });
+                return d1.promise();
+            }),
+            p2task = queue.enqueue(
+                function() {
+                    callCount++;
+                    return d2.promise();
+                },
+                { weight : 4 });
 
         queue.enqueue(
             function() {
                 callCount++;
-                return p3;
+                return d3.promise();
             },
             { weight : 2 });
 
         var p4task = queue.enqueue(
             function() {
                 callCount++;
-                return p4;
+                return d4.promise();
             },
             { weight : 3 });
 
         queue.enqueue(
             function() {
                 callCount++;
-                return p5;
+                return d5.promise();
             },
             { weight : 2 });
 
@@ -157,13 +154,13 @@ describe('queue', function() {
             callCount.should.be.equal(2);
         });
 
-        p1.fulfill();
+        d1.resolve();
         p1task.then(function() {
             callCount.should.be.equal(2);
-            p2.fulfill();
+            d2.resolve();
             p2task.then(function() {
                 callCount.should.be.equal(4);
-                p4.fulfill();
+                d4.resolve();
                 p4task.then(function() {
                     callCount.should.be.equal(5);
                     done();
@@ -174,38 +171,38 @@ describe('queue', function() {
 
     it('should run tasks if new limit is increased', function(done) {
         var queue = new Queue({ weightLimit : 3 }),
-            p1 = vow.promise(),
-            p2 = vow.promise(),
-            p3 = vow.promise(),
-            p4 = vow.promise(),
-            p5 = vow.promise(),
+            d1 = vow.defer(),
+            d2 = vow.defer(),
+            d3 = vow.defer(),
+            d4 = vow.defer(),
+            d5 = vow.defer(),
             callCount = 0;
 
         queue.enqueue(function() {
             callCount++;
-            return p1;
+            return d1.promise();
         });
 
         queue.enqueue(
             function() {
                 callCount++;
-                return p2;
+                return d2.promise();
             },
             { weight : 2 });
 
         queue.enqueue(function() {
             callCount++;
-            return p3;
+            return d3.promise();
         });
 
         queue.enqueue(function() {
             callCount++;
-            return p4;
+            return d4.promise();
         });
 
         queue.enqueue(function() {
             callCount++;
-            return p5;
+            return d5.promise();
         });
 
         process.nextTick(function() {
