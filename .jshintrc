@@ -1,7 +1,8 @@
 {
     "expr"     : true,
     "undef"    : true,
-    "predef"   : ["require", "exports", "module", "process", "describe", "it", "beforeEach", "afterEach"],
+    "predef"   : ["describe", "it", "beforeEach", "afterEach"],
+    "node"     : true,
     "boss"     : true,
     "sub"      : true,
     "supernew" : true,
