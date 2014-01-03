@@ -1,2 +1,4 @@
-Version 0.0.1:
- * Initial release.
+Changelog
+=========
+
+See [releases](https://github.com/dfilatov/vow-queue/releases).
