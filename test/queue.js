@@ -1,5 +1,6 @@
 var Queue = require('../lib/queue'),
-    vow = require('vow');
+    vow = require('vow'),
+    nextTick = typeof setImmediate !== 'undefined'? setImmediate : process.nextTick;
 
 describe('queue', function() {
     it('enqueue should return promise', function() {
@@ -79,7 +80,7 @@ describe('queue', function() {
 
         queue.start();
 
-        process.nextTick(function() {
+        nextTick(function() {
             callCount.should.be.equal(2);
             done();
         });
@@ -163,7 +164,7 @@ describe('queue', function() {
 
         queue.start();
 
-        process.nextTick(function() {
+        nextTick(function() {
             callCount.should.be.equal(2);
         });
 
@@ -221,12 +222,12 @@ describe('queue', function() {
 
         queue.start();
 
-        process.nextTick(function() {
+        nextTick(function() {
             callCount.should.be.equal(2);
 
             queue.params({ weightLimit : 5 });
 
-            process.nextTick(function() {
+            nextTick(function() {
                 callCount.should.be.equal(4);
                 done();
             });
