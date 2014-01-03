@@ -1,12 +1,12 @@
 vow-queue
 ===============
 
-Simple queue with weights and priorities
+vow-queue is a module for task queue with weights and priorities
 
 Installation
 ------------
 
-Vow-queue can be installed using `npm`:
+Module can be installed using `npm`:
 
 ```
 npm install vow-queue
@@ -36,4 +36,8 @@ queue.enqueue( // task with custom priority and weight
         priority : 3, // this task will be started before the previous two
         weight   : 5
     });
+    
+queue.start(); // starts tasks processing
+
+queue.enqueue(function() { }); // and enqueue yet another task
 ````

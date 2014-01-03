@@ -1,5 +1,6 @@
 var Queue = require('../lib/queue'),
-    vow = require('vow');
+    vow = require('vow'),
+    nextTick = typeof setImmediate !== 'undefined'? setImmediate : process.nextTick;
 
 describe('queue', function() {
     it('enqueue should return promise', function() {
@@ -19,6 +20,8 @@ describe('queue', function() {
                 done();
             });
 
+        queue.start();
+
         defer.resolve('ok');
     });
 
@@ -35,6 +38,8 @@ describe('queue', function() {
             });
 
         defer.reject('err');
+
+        queue.start();
     });
 
     it('enqueue should return promise for synchronous task', function(done) {
@@ -47,6 +52,8 @@ describe('queue', function() {
                 res.should.be.equal('ok');
                 done();
             });
+
+        queue.start();
     });
 
     it('should run tasks while weight limit not exceeded', function(done) {
@@ -71,7 +78,9 @@ describe('queue', function() {
             return d3.promise();
         });
 
-        process.nextTick(function() {
+        queue.start();
+
+        nextTick(function() {
             callCount.should.be.equal(2);
             done();
         });
@@ -108,9 +117,11 @@ describe('queue', function() {
             callCount.should.be.equal(3);
             done();
         });
+
+        queue.start();
     });
 
-    it('should run tasks with the release of the queue and according their weights', function(done) {
+    it('should run tasks with the release of the queue and according to their weights', function(done) {
         var queue = new Queue({ weightLimit : 5 }),
             d1 = vow.defer(),
             d2 = vow.defer(),
@@ -150,11 +161,15 @@ describe('queue', function() {
             },
             { weight : 2 });
 
-        process.nextTick(function() {
+
+        queue.start();
+
+        nextTick(function() {
             callCount.should.be.equal(2);
         });
 
         d1.resolve();
+
         p1task.then(function() {
             callCount.should.be.equal(2);
             d2.resolve();
@@ -205,12 +220,14 @@ describe('queue', function() {
             return d5.promise();
         });
 
-        process.nextTick(function() {
+        queue.start();
+
+        nextTick(function() {
             callCount.should.be.equal(2);
 
             queue.params({ weightLimit : 5 });
 
-            process.nextTick(function() {
+            nextTick(function() {
                 callCount.should.be.equal(4);
                 done();
             });
@@ -225,5 +242,62 @@ describe('queue', function() {
         }).should.throw('task with weight of 6 can\'t be performed in queue with limit of 5');
 
         done();
+    });
+
+    describe('start/stop', function() {
+        it('should not run task while if it is not started', function(done) {
+            var queue = new Queue(),
+                passed = true;
+
+            queue.enqueue(function() {
+                passed = false;
+            });
+
+            setTimeout(function() {
+                passed.should.be.true;
+                done();
+            }, 20);
+        });
+
+        it('should not notify about processed task if it is stopped', function(done) {
+            var queue = new Queue(),
+                passed = true;
+
+            queue.enqueue(function() { return 'ok'; }).then(function() {
+                passed = false;
+            });
+
+            queue.start();
+            queue.stop();
+
+            setTimeout(function() {
+                passed.should.be.true;
+                done();
+            }, 20);
+        });
+
+        it('should notify about processed task after it is started', function(done) {
+            var queue = new Queue(),
+                res = [];
+
+            vow.all([
+                queue.enqueue(function() { return 1; }),
+                queue.enqueue(function() { return 2; })
+            ]).then(function(_res) {
+                res = _res;
+            });
+
+            queue.start();
+            queue.stop();
+
+            setTimeout(function() {
+                res.should.be.eql([]);
+                queue.start();
+                setTimeout(function() {
+                    res.should.be.eql([1, 2]);
+                    done();
+                }, 20);
+            }, 20);
+        });
     });
 });
