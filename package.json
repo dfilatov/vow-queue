@@ -30,5 +30,9 @@
         "lint": "make lint",
         "coverage": "make coverage",
         "clean": "make clean"
+    },
+    "repository": {
+        "type" : "git",
+        "url" : "http://github.com/dfilatov/vow-queue.git"
     }
 }
