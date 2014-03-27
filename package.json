@@ -2,7 +2,7 @@
   "name": "vow-queue",
   "author": "Dmitry Filatov <dfilatov@yandex-team.ru>",
   "description": "Vow-based task queue",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "contributors": [
     {
       "name": "Dmitry Filatov",
