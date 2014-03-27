@@ -12,6 +12,12 @@ Module can be installed using `npm`:
 npm install vow-queue
 ```
 
+or `bower`:
+
+```
+bower install vow-queue
+```
+
 Usage
 -----
 
