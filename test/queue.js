@@ -299,5 +299,24 @@ describe('queue', function() {
                 }, 20);
             }, 20);
         });
+
+        it('should pass notification', function(done) {
+            var queue = new Queue();
+
+            queue
+                .enqueue(function() {
+                    var defer = vow.defer();
+                    setTimeout(function() {
+                        defer.notify('notify');
+                    }, 20);
+                    return defer.promise();
+                })
+                .progress(function(val) {
+                    val.should.be.equal('notify');
+                    done();
+                });
+
+            queue.start();
+        });
     });
 });
