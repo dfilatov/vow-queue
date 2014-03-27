@@ -1,4 +1,4 @@
-vow-queue
+vow-queue [![NPM version](https://badge.fury.io/js/vow-queue.png)](http://badge.fury.io/js/vow-queue) [![Build Status](https://secure.travis-ci.org/dfilatov/vow-queue.png)](http://travis-ci.org/dfilatov/vow-queue)
 ===============
 
 vow-queue is a module for task queue with weights and priorities
