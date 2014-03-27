@@ -244,6 +244,25 @@ describe('queue', function() {
         done();
     });
 
+    it('should pass notification', function(done) {
+        var queue = new Queue();
+
+        queue
+            .enqueue(function() {
+                var defer = vow.defer();
+                setTimeout(function() {
+                    defer.notify('notify');
+                }, 20);
+                return defer.promise();
+            })
+            .progress(function(val) {
+                val.should.be.equal('notify');
+                done();
+            });
+
+        queue.start();
+    });
+
     describe('start/stop', function() {
         it('should not run task while if it is not started', function(done) {
             var queue = new Queue(),
@@ -299,22 +318,64 @@ describe('queue', function() {
                 }, 20);
             }, 20);
         });
+    });
 
-        it('should pass notification', function(done) {
+    describe('stats', function() {
+        it('should properly count pending tasks counter', function(done) {
             var queue = new Queue();
+
+            queue.getStats().pendingTasksCount.should.be.equal(0);
+
+            queue
+                .enqueue(function() {})
+                .done(function() {
+                    queue.getStats().pendingTasksCount.should.be.equal(0);
+                    done();
+                });
+
+            queue.getStats().pendingTasksCount.should.be.equal(1);
+
+            queue.start();
+        });
+
+        it('should properly count processing tasks counter', function(done) {
+            var queue = new Queue();
+
+            queue.getStats().processingTasksCount.should.be.equal(0);
 
             queue
                 .enqueue(function() {
-                    var defer = vow.defer();
-                    setTimeout(function() {
-                        defer.notify('notify');
-                    }, 20);
-                    return defer.promise();
+                    return vow.resolve('ok').delay(30);
                 })
-                .progress(function(val) {
-                    val.should.be.equal('notify');
+                .done(function() {
+                    queue.getStats().processingTasksCount.should.be.equal(0);
                     done();
                 });
+
+            queue.getStats().processingTasksCount.should.be.equal(0);
+
+            setTimeout(
+                function() {
+                    queue.getStats().processingTasksCount.should.be.equal(1);
+                },
+                10);
+
+            queue.start();
+        });
+
+        it('should properly count processed tasks counter', function(done) {
+            var queue = new Queue();
+
+            queue.getStats().processedTasksCount.should.be.equal(0);
+
+            queue
+                .enqueue(function() {})
+                .done(function() {
+                    queue.getStats().processedTasksCount.should.be.equal(1);
+                    done();
+                });
+
+            queue.getStats().processedTasksCount.should.be.equal(0);
 
             queue.start();
         });
