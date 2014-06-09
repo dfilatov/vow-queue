@@ -161,7 +161,6 @@ describe('queue', function() {
             },
             { weight : 2 });
 
-
         queue.start();
 
         nextTick(function() {
