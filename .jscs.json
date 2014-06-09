@@ -6,7 +6,7 @@
     "requireRightStickedOperators": ["!"],
     "requireLeftStickedOperators": [","],
     "disallowKeywords": ["with"],
-    "disallowMulipleLineBreaks": true,
+    "disallowMultipleLineBreaks": true,
     "requireAlignedObjectValues": "skipWithLineBreak",
     "validateJSDoc": {
         "checkParamNames": true,
