@@ -224,7 +224,7 @@ describe('queue', function() {
         nextTick(function() {
             callCount.should.be.equal(2);
 
-            queue.params({ weightLimit : 5 });
+            queue.setParams({ weightLimit : 5 });
 
             nextTick(function() {
                 callCount.should.be.equal(4);
