@@ -72,5 +72,9 @@ Stops processing of tasks in queue
 ####Boolean isStarted()
 Returns whether processing is started
 
+####void setParams(params)
+Sets queue params
+* `params.weightLimit=100` limit of summary tasks weight which can be processed concurrently
+
 ####Object getStats()
 Returns statistics about queue
