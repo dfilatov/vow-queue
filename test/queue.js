@@ -114,7 +114,7 @@ describe('queue', function() {
 
         d1.resolve();
         p1task.then(function() {
-            callCount.should.be.equal(3);
+            callCount.should.be.equal(2);
             done();
         });
 
@@ -148,18 +148,17 @@ describe('queue', function() {
             { weight : 2 });
 
         var p4task = queue.enqueue(
-            function() {
-                callCount++;
-                return d4.promise();
-            },
-            { weight : 3 });
-
-        queue.enqueue(
-            function() {
-                callCount++;
-                return d5.promise();
-            },
-            { weight : 2 });
+                function() {
+                    callCount++;
+                    return d4.promise();
+                },
+                { weight : 3 }),
+            p5task = queue.enqueue(
+                function() {
+                    callCount++;
+                    return d5.promise();
+                },
+                { weight : 2 });
 
         queue.start();
 
@@ -173,11 +172,15 @@ describe('queue', function() {
             callCount.should.be.equal(2);
             d2.resolve();
             p2task.then(function() {
-                callCount.should.be.equal(4);
+                callCount.should.be.equal(2);
                 d4.resolve();
                 p4task.then(function() {
-                    callCount.should.be.equal(5);
-                    done();
+                    callCount.should.be.equal(4);
+                    d5.resolve();
+                    p5task.then(function() {
+                        callCount.should.be.equal(5);
+                        done();
+                    });
                 });
             });
         });
