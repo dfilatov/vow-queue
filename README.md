@@ -47,3 +47,30 @@ queue.start(); // starts tasks processing
 
 queue.enqueue(function() { }); // and enqueue yet another task
 ````
+
+API
+-----
+### Creating queue
+####new Queue([params])
+  * `params.weightLimit=100` limit of summary tasks weight which can be processed concurrently
+
+### Methods of queue
+####Promise enqueue(taskFn, [taskParams])
+Enqueue given task in queue
+  * `taskFn` task function which can return either a promise or a value
+  * `taskParams.weight=1` weight of given task
+  * `taskParams.priority=1` priority of given task
+
+Returns promise which will be resolved when given task is done
+
+####void start()
+Starts processing of tasks in queue
+
+####void stop()
+Stops processing of tasks in queue
+
+####Boolean isStarted()
+Returns whether processing is started
+
+####Object getStats()
+Returns statistics about queue
