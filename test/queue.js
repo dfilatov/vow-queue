@@ -266,7 +266,6 @@ describe('queue', function() {
     });
 
     describe('priority', function() {
-
         it('should exec according to priority (forward adding)', function(done) {
             var queue = new Queue({ weightLimit : 3 }),
                 calls = [];
@@ -374,7 +373,6 @@ describe('queue', function() {
                 done();
             });
         });
-
     });
 
     describe('start/stop', function() {
