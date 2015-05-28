@@ -265,6 +265,118 @@ describe('queue', function() {
         queue.start();
     });
 
+    describe('priority', function() {
+
+        it('should exec according to priority (forward adding)', function(done) {
+            var queue = new Queue({ weightLimit : 3 }),
+                calls = [];
+
+            queue.enqueue(function() {
+                calls.push(3);
+                return vow.resolve();
+            }, {
+                priority : 3,
+                weight   : 1
+            });
+
+            queue.enqueue(function() {
+                calls.push(2);
+                return vow.resolve();
+            }, {
+                priority : 2,
+                weight   : 1
+            });
+
+            queue.enqueue(function() {
+                calls.push(1);
+                return vow.resolve();
+            }, {
+                priority : 1,
+                weight   : 1
+            });
+
+            queue.start();
+
+            nextTick(function() {
+                calls.should.be.eql([3, 2, 1]);
+                done();
+            });
+        });
+
+        it('should exec according to priority (backwards adding)', function(done) {
+            var queue = new Queue({ weightLimit : 3 }),
+                calls = [];
+
+            queue.enqueue(function() {
+                calls.push(1);
+                return vow.resolve();
+            }, {
+                priority : 1,
+                weight   : 1
+            });
+
+            queue.enqueue(function() {
+                calls.push(2);
+                return vow.resolve();
+            }, {
+                priority : 2,
+                weight   : 1
+            });
+
+            queue.enqueue(function() {
+                calls.push(3);
+                return vow.resolve();
+            }, {
+                priority : 3,
+                weight   : 1
+            });
+
+            queue.start();
+
+            nextTick(function() {
+                calls.should.be.eql([3, 2, 1]);
+                done();
+            });
+        });
+
+        it('should exec according to priority (mixed adding)', function(done) {
+            var queue = new Queue({ weightLimit : 3 }),
+                calls = [];
+
+            queue.enqueue(function() {
+                calls.push(1);
+                return vow.resolve();
+            }, {
+                priority : 1,
+                weight   : 1
+            });
+
+            queue.enqueue(function() {
+                calls.push(3);
+                return vow.resolve();
+            }, {
+                priority : 3,
+                weight   : 1
+            });
+
+            queue.enqueue(function() {
+                calls.push(2);
+                return vow.resolve();
+            }, {
+                priority : 2,
+                weight   : 1
+            });
+
+            queue.start();
+
+            nextTick(function() {
+                calls.should.be.eql([3, 2, 1]);
+                done();
+            });
+        });
+
+    });
+
     describe('start/stop', function() {
         it('should not run task while if it is not started', function(done) {
             var queue = new Queue(),
