@@ -24,6 +24,7 @@
     "istanbul": "0.1.39",
     "mocha-istanbul": "*"
   },
+  "license" : "MIT",
   "scripts": {
     "test": "make validate",
     "lint": "make lint",
