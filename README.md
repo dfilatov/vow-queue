@@ -2,8 +2,6 @@
 [![NPM Version](https://img.shields.io/npm/v/vidom.svg?style=flat-square)](https://www.npmjs.com/package/vow-queue)
 [![Build Status](https://img.shields.io/travis/dfilatov/vow-queue/master.svg?style=flat-square)](https://travis-ci.org/dfilatov/vow-queue/branches)
 
-===============
-
 vow-queue is a module for task queue with weights and priorities
 
 Installation
