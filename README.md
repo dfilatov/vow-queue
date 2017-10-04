@@ -1,4 +1,7 @@
-vow-queue [![NPM version](https://badge.fury.io/js/vow-queue.png)](http://badge.fury.io/js/vow-queue) [![Build Status](https://secure.travis-ci.org/dfilatov/vow-queue.png)](http://travis-ci.org/dfilatov/vow-queue)
+# vow-queue
+[![NPM Version](https://img.shields.io/npm/v/vidom.svg?style=flat-square)](https://www.npmjs.com/package/vow-queue)
+[![Build Status](https://img.shields.io/travis/dfilatov/vow-queue/master.svg?style=flat-square)](https://travis-ci.org/dfilatov/vow-queue/branches)
+
 ===============
 
 vow-queue is a module for task queue with weights and priorities
@@ -51,11 +54,11 @@ queue.enqueue(function() { }); // and enqueue yet another task
 API
 -----
 ### Creating queue
-####new Queue([params])
+#### new Queue([params])
   * `params.weightLimit=100` limit of summary tasks weight which can be processed concurrently
 
 ### Methods of queue
-####Promise enqueue(taskFn, [taskParams])
+#### Promise enqueue(taskFn, [taskParams])
 Enqueue given task in queue
   * `taskFn` task function which can return either a promise or a value
   * `taskParams.weight=1` weight of given task
@@ -63,10 +66,10 @@ Enqueue given task in queue
 
 Returns promise which will be resolved when given task is done
 
-####void start()
+#### void start()
 Starts processing of tasks in queue
 
-####void stop()
+#### void stop()
 Stops processing of tasks in queue
 
 ####Boolean isStarted()
